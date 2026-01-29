@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Wishlist Manager</title>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0d59f2",
+                        "background-light": "#f3f4f6",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem", 
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Hide scrollbar for cleaner tabs */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display antialiased min-h-screen flex flex-col selection:bg-primary/20">
+<!-- Sticky Header -->
+<header class="sticky top-0 z-50 w-full bg-white/85 dark:bg-[#101622]/85 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 transition-colors duration-300">
+<div class="max-w-[1600px] mx-auto">
+<!-- Top Row: Logo, Search, Cost Summary -->
+<div class="px-4 md:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+<!-- Logo & Branding -->
+<div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+<div class="flex items-center gap-2">
+<div class="flex items-center justify-center size-9 rounded-lg bg-primary text-white shadow-lg shadow-primary/30">
+<span class="material-symbols-outlined text-[20px]">grid_view</span>
+</div>
+<h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Wishlist</h1>
+</div>
+<!-- Mobile Action: Search Toggle (Visual Only) -->
+<button class="md:hidden p-2 text-gray-500">
+<span class="material-symbols-outlined">search</span>
+</button>
+</div>
+<!-- Search Bar (Pinterest style pill) -->
+<div class="hidden md:block flex-1 max-w-xl w-full px-4">
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+<span class="material-symbols-outlined text-gray-400 group-focus-within:text-primary transition-colors text-[20px]">search</span>
+</div>
+<input class="w-full h-11 pl-11 pr-4 bg-gray-100 dark:bg-gray-800 border-transparent focus:border-transparent rounded-full text-sm font-medium focus:ring-2 focus:ring-primary/20 focus:bg-white dark:focus:bg-gray-900 transition-all placeholder:text-gray-500" placeholder="Search your items..." type="text"/>
+</div>
+</div>
+<!-- Right Actions: Total Cost & User -->
+<div class="flex items-center gap-4 w-full md:w-auto justify-end">
+<div class="flex flex-col items-end mr-2">
+<span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Total Value</span>
+<span class="text-lg font-bold text-slate-900 dark:text-white leading-none">$1,219.00</span>
+</div>
+<button class="size-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-700 shadow-sm hover:ring-2 hover:ring-primary hover:ring-offset-2 transition-all">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="User profile avatar with initials" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBtzuv5HKKjVxW4wGBQ-a8m_MrSwItdCqFHWiiZQZ5e4igxVNpTcy2wiJKLUwtwX1Lo2pCXZVOQQNsN65s-YKe3Lto_BUcPsa2VS0N904cGjOpPSlyJuf4tlX7ZhAI37sZ3kIQsvXpdgWZf20WmKHR0m-LsJ_L6JH-faBcClcRkM37E8DYBXEcU6coANGNLSBQyN041MrriOyrT4Sy9albLayk4F2PpPYg76pWO8J_4TSUPqqMslVOK9RGnAcJLC7-JDHC4tkbLnBk"/>
+</button>
+</div>
+</div>
+<!-- Bottom Row: Navigation Tabs -->
+<div class="px-4 md:px-8 mt-1">
+<nav aria-label="Tabs" class="flex space-x-6 md:space-x-8 overflow-x-auto no-scrollbar">
+<a class="group flex items-center gap-2 border-b-[3px] border-primary py-3 px-1 text-sm font-bold text-slate-900 dark:text-white whitespace-nowrap" href="#">
+<span>All Items</span>
+<span class="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 text-xs py-0.5 px-2 rounded-full">14</span>
+</a>
+<a class="group flex items-center gap-2 border-b-[3px] border-transparent py-3 px-1 text-sm font-medium text-gray-500 hover:text-primary hover:border-gray-200 dark:text-gray-400 dark:hover:text-gray-200 whitespace-nowrap transition-all" href="#">
+<span>Want</span>
+<span class="bg-gray-100 dark:bg-gray-800 group-hover:bg-primary/10 group-hover:text-primary text-gray-500 text-xs py-0.5 px-2 rounded-full transition-colors">8</span>
+</a>
+<a class="group flex items-center gap-2 border-b-[3px] border-transparent py-3 px-1 text-sm font-medium text-gray-500 hover:text-primary hover:border-gray-200 dark:text-gray-400 dark:hover:text-gray-200 whitespace-nowrap transition-all" href="#">
+<span>Considering</span>
+<span class="bg-gray-100 dark:bg-gray-800 group-hover:bg-primary/10 group-hover:text-primary text-gray-500 text-xs py-0.5 px-2 rounded-full transition-colors">4</span>
+</a>
+<a class="group flex items-center gap-2 border-b-[3px] border-transparent py-3 px-1 text-sm font-medium text-gray-500 hover:text-primary hover:border-gray-200 dark:text-gray-400 dark:hover:text-gray-200 whitespace-nowrap transition-all" href="#">
+<span>Purchased</span>
+<span class="bg-gray-100 dark:bg-gray-800 group-hover:bg-primary/10 group-hover:text-primary text-gray-500 text-xs py-0.5 px-2 rounded-full transition-colors">2</span>
+</a>
+</nav>
+</div>
+</div>
+</header>
+<!-- Main Content: Masonry Grid -->
+<main class="flex-grow w-full max-w-[1600px] mx-auto p-4 md:p-6 lg:p-8">
+<!-- Masonry Container using CSS Columns -->
+<div class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-6 space-y-6 pb-20">
+<!-- Card 1: Ergonomic Chair -->
+<div class="break-inside-avoid group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+<div class="relative w-full">
+<img alt="Ergonomic office chair" class="w-full h-auto object-cover" data-alt="Black ergonomic mesh office chair in a modern room" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6vrEJVgUDAoBYerBTXbpXUI2KwuphfCZsxKPvl-Io_4GFuaiHPBUYoKwkSnSHvBVdCD5d52BZXzVSwRJphctY-Kg6kS1C7hrCbI4GJKriSbjKGd7THwM4G6YZZ0IxobdOFl7hVgBZYlAqw4OONuYmnJfWNHqpW3S0XzteRp_oEnnBzMH0CjN69RAnF42f81sCUC9xlsTR_BGKLliHf6MiQlKOJkS0_LeCM_3l9vtU12-z4a-xUzfZkxuxcI4Befdk_TonxChmxCA"/>
+<!-- Hover Overlay Actions -->
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3 gap-2">
+<button class="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all" title="Edit Item">
+<span class="material-symbols-outlined text-[20px] leading-none">edit</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2 gap-2">
+<h3 class="text-base font-semibold text-slate-900 dark:text-white leading-tight line-clamp-2">Ergonomic Office Chair</h3>
+<span class="shrink-0 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide border border-red-100 dark:border-red-900/30">High</span>
+</div>
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-3">$350.00</p>
+<div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span> Want
+                         </span>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2: Mechanical Keyboard -->
+<div class="break-inside-avoid group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+<div class="relative w-full">
+<img alt="Mechanical Keyboard" class="w-full h-auto object-cover" data-alt="Close up of a mechanical keyboard with colorful keycaps" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCbfQ_IaND0bheqTcU2OIDmAL7BrJf4VIlFgjQmylkpjtSjac0ltw3LUkvuBRItmFTSPLCKSom6SBpPxf1-rQsVuQLp996ZZcKRYK9ZUNi4B5ZPqqVqjw8EQ2GkgxK62exztc00Dk_1vK-_kucUDs9Gy-8Sxj-0mp4j6t1VTvr1YO5KXIUeRx6y51xJ3XR5tibkuAWt1ngdjB5JnI96s0rvC7VfTUOzpurgxSPR75YigLIkZqqVIkQFM3MH8tnmIxt3lQZbR194wRE"/>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3 gap-2">
+<button class="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all">
+<span class="material-symbols-outlined text-[20px] leading-none">edit</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2 gap-2">
+<h3 class="text-base font-semibold text-slate-900 dark:text-white leading-tight line-clamp-2">Mechanical Keyboard</h3>
+<span class="shrink-0 bg-yellow-50 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide border border-yellow-100 dark:border-yellow-900/30">Med</span>
+</div>
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-3">$120.00</p>
+<div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-yellow-500"></span> Considering
+                         </span>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Headphones -->
+<div class="break-inside-avoid group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+<div class="relative w-full">
+<img alt="Headphones" class="w-full h-auto object-cover" data-alt="Silver over-ear headphones on a yellow background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBvUxXQyYIQUPWKLf_RoQND4bwWDa4vDAAnVlOy1lSZVFfBDmMmxLvt5i9O1uzq_sCiXdueygLpFB3YohV8F5PJq9dW9SCaDengkdyybRnx0ULwscoCizjzp1aMasdwDkGSMWXc69IRfQU3Fh1Qc6WfsCmmy5EP5h-JSo1kwt4KULwMQ2hsxwrQQttpBceUyT9mgNq5Coa0SPAt7uL2mhK58RQ6_e00C8hU0bj5FWy3A-iZyiHzTjw2yeQ2cO1-a6lKyHPEl3yttfY"/>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3 gap-2">
+<button class="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all">
+<span class="material-symbols-outlined text-[20px] leading-none">edit</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2 gap-2">
+<h3 class="text-base font-semibold text-slate-900 dark:text-white leading-tight line-clamp-2">Noise Cancelling Headphones</h3>
+<span class="shrink-0 bg-gray-100 text-gray-600 dark:bg-gray-700/50 dark:text-gray-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide border border-gray-200 dark:border-gray-600">Low</span>
+</div>
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-3">$299.00</p>
+<div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-green-500"></span> Purchased
+                         </span>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4: Monitor -->
+<div class="break-inside-avoid group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+<div class="relative w-full">
+<img alt="Ultrawide Monitor" class="w-full h-auto object-cover" data-alt="A modern desk setup with a large ultrawide monitor displaying code" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA-XR6uk_dd57r6LTyfW-ZaelR51cBTRkxI-S2aEUDGs2vcfM_vmPcfUax0m9wQmC9rnIcSdW3MaIL2ih8Qv2TQRmEsIiihPX0x_UF1R4fkMOrEpqXflE-stywznAzFs0oY_2r4_FxZbSaEczSpOyFJzuaf9M1RQPWitKgrDua4vrOV1Kum8Ooccpy6cgJ0d8vSNgvugKyu53uNE-9tX0C7KwofalRixnIseN5wcqhm63ZmLaEftZIELN4jiXUdbiDzEMyh2sqWwBU"/>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3 gap-2">
+<button class="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all">
+<span class="material-symbols-outlined text-[20px] leading-none">edit</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2 gap-2">
+<h3 class="text-base font-semibold text-slate-900 dark:text-white leading-tight line-clamp-2">Ultrawide Monitor</h3>
+<span class="shrink-0 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide border border-red-100 dark:border-red-900/30">High</span>
+</div>
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-3">$450.00</p>
+<div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span> Want
+                         </span>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 5: Sofa (Tall Image) -->
+<div class="break-inside-avoid group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+<div class="relative w-full">
+<img alt="Sofa" class="w-full h-auto object-cover" data-alt="Green velvet sofa in a living room with wooden floors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCmOpw2JdE1s2b-rV-8lOIW0v2M5iKwFoogWob4-l-pbg1no_ngkePijf1NLXmJClzBHSIYhYT7I-hrmIOQ0UYVUe4nShW7jevtBxHS-KP4bD2nd3_6PZu1aLyQ4AfkCfLNbU0jIcHDid04sANaj_J1PkWsQWH9tEitUA1c6ZDI3knbHES1qUJ06Pucz-fSqVyx1GdtJFHEKqUagHlKM8waa6bEtmldE51hHPbSywGqHfoztfvuEa4sVIepI_ZeUsRkIGeOvjpBcrI"/>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3 gap-2">
+<button class="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all">
+<span class="material-symbols-outlined text-[20px] leading-none">edit</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2 gap-2">
+<h3 class="text-base font-semibold text-slate-900 dark:text-white leading-tight line-clamp-2">Mid-Century Sofa</h3>
+<span class="shrink-0 bg-yellow-50 text-yellow-600 dark:bg-yellow-900/20 dark:text-yellow-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide border border-yellow-100 dark:border-yellow-900/30">Med</span>
+</div>
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-3">$899.00</p>
+<div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-yellow-500"></span> Considering
+                         </span>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 6: Tablet -->
+<div class="break-inside-avoid group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+<div class="relative w-full">
+<img alt="Tablet" class="w-full h-auto object-cover" data-alt="Tablet computer lying on a table with a stylus" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAzOSiJ1U5D0T5_32Ko0Mg5rsDZjw1tKkcKmzydcfrSKTiHkboxWms9aH_E6_ZZtT2ijdCGNqiq-GrG2Pp8muWKmKqqwjcYXLRYd7GOxTI_n8WfgMX8X6xOlNzWb5zHzdfQujA36U-oPq5r-VMjGXB1J1pfUMvyXAzeFeTW6RbAdpR4cEYjA6IdQQ1GduxsCR3tn01g0gwQzwCuf40gYDEuE3HKnBpuzvqHNY1mxhFPkADlEzKq7XLtilO6KFa9itd7Dgr7WdXL0tQ"/>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3 gap-2">
+<button class="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all">
+<span class="material-symbols-outlined text-[20px] leading-none">edit</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2 gap-2">
+<h3 class="text-base font-semibold text-slate-900 dark:text-white leading-tight line-clamp-2">iPad Air</h3>
+<span class="shrink-0 bg-gray-100 text-gray-600 dark:bg-gray-700/50 dark:text-gray-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide border border-gray-200 dark:border-gray-600">Low</span>
+</div>
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-3">$599.00</p>
+<div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span> Want
+                         </span>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 7: Camera -->
+<div class="break-inside-avoid group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-out overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+<div class="relative w-full">
+<img alt="Camera" class="w-full h-auto object-cover" data-alt="Black digital camera on a wooden surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBiBi32xmdbVV32i9OdO7rv9F7hQatPwDk8VZ_hPuiMhgBTJS_sMVo7uzEusI7OD9PxsO0lybiufYZ_atj0_bUciHx-wh_lmkC9tcp7AeDRR1CyCl5sh4buTfuwSRshLBHcS0-3tSQUIN-muWAwMxXKOt4UxDel4mq2idRnWOXJOz9M1DKfBQrRSdzisX2bMBrfmWnuE-DmhvqkYYkdYVY29RpUMsahmDcTbRTJ1II6sxJ4AYpAGwDJ2kOIFrLhZq213wAWpVWO_Uk"/>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3 gap-2">
+<button class="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all">
+<span class="material-symbols-outlined text-[20px] leading-none">edit</span>
+</button>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-2 gap-2">
+<h3 class="text-base font-semibold text-slate-900 dark:text-white leading-tight line-clamp-2">Sony Alpha a7 III</h3>
+<span class="shrink-0 bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-300 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wide border border-red-100 dark:border-red-900/30">High</span>
+</div>
+<p class="text-lg font-bold text-slate-900 dark:text-white mb-3">$1,998.00</p>
+<div class="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-gray-700">
+<span class="text-xs text-gray-500 dark:text-gray-400 font-medium flex items-center gap-1.5">
+<span class="size-2 rounded-full bg-primary animate-pulse"></span> Want
+                         </span>
+<button class="text-gray-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">more_horiz</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (FAB) -->
+<div class="fixed bottom-8 right-8 z-40">
+<button aria-label="Add new item" class="group flex items-center justify-center size-14 bg-primary text-white rounded-full shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:scale-110 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-primary/20">
+<span class="material-symbols-outlined text-3xl group-hover:rotate-90 transition-transform duration-300">add</span>
+</button>
+<!-- Tooltip for FAB (appears on hover) -->
+<div class="absolute right-full mr-4 top-1/2 -translate-y-1/2 whitespace-nowrap bg-gray-900 text-white text-xs font-bold py-1.5 px-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none hidden md:block">
+            Add New Item
+            <div class="absolute top-1/2 -right-1 -translate-y-1/2 border-4 border-transparent border-l-gray-900"></div>
+</div>
+</div>
+</body></html>
