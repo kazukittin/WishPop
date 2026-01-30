@@ -88,7 +88,7 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
             ...item,
             title: title.trim(),
             description: description.trim() || undefined,
-            imageUrl: imageUrl.trim() || 'https://via.placeholder.com/400x300?text=No+Image',
+            imageUrl: imageUrl.trim() || 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image',
             price: parseFloat(price) || 0,
             url: url.trim(),
             status,
@@ -125,14 +125,14 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                     <div className="flex items-center gap-2">
                         <Edit3 className="w-5 h-5 text-[#0d59f2]" />
                         <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                            Edit Item
+                            アイテムを編集
                         </h2>
                     </div>
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => setShowDeleteConfirm(true)}
                             className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-colors"
-                            title="Delete Item"
+                            title="削除"
                         >
                             <Trash2 className="w-5 h-5" />
                         </button>
@@ -150,23 +150,23 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                     <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-sm rounded-2xl">
                         <div className="bg-white dark:bg-gray-800 rounded-xl p-6 m-4 shadow-2xl max-w-sm">
                             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-2">
-                                Delete Item?
+                                削除しますか？
                             </h3>
                             <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                This action cannot be undone. Are you sure you want to delete &quot;{item.title}&quot;?
+                                この操作は取り消せません。「{item.title}」を削除してもよろしいですか？
                             </p>
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setShowDeleteConfirm(false)}
                                     className="flex-1 h-10 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
                                 >
-                                    Cancel
+                                    キャンセル
                                 </button>
                                 <button
                                     onClick={handleDelete}
                                     className="flex-1 h-10 bg-red-500 text-white rounded-lg font-semibold text-sm hover:bg-red-600 transition-all"
                                 >
-                                    Delete
+                                    削除する
                                 </button>
                             </div>
                         </div>
@@ -178,7 +178,7 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                     {/* URL Input with Fetch Button */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Product URL
+                            商品URL
                         </label>
                         <div className="flex gap-2">
                             <div className="relative flex-1">
@@ -202,7 +202,7 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                                 {isFetching ? (
                                     <Loader2 className="w-4 h-4 animate-spin" />
                                 ) : (
-                                    'Re-fetch'
+                                    '再取得'
                                 )}
                             </button>
                         </div>
@@ -214,13 +214,13 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                     {/* Title */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Title <span className="text-red-500">*</span>
+                            商品名 <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Product name"
+                            placeholder="商品名を入力"
                             required
                             className="w-full h-11 px-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-[#0d59f2]/20 focus:border-[#0d59f2] transition-all"
                         />
@@ -229,7 +229,7 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                     {/* Image URL */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Image URL
+                            画像URL
                         </label>
                         <input
                             type="url"
@@ -242,7 +242,7 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                             <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
                                 <img
                                     src={imageUrl}
-                                    alt="Preview"
+                                    alt="プレビュー"
                                     className="w-full h-32 object-cover rounded-lg"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).style.display = 'none';
@@ -255,7 +255,7 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                     {/* Price */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Price (¥) <span className="text-red-500">*</span>
+                            価格（円） <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="number"
@@ -273,7 +273,7 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                         {/* Status */}
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Status
+                                ステータス
                             </label>
                             <select
                                 value={status}
@@ -291,7 +291,7 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                         {/* Priority */}
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Priority
+                                優先度
                             </label>
                             <select
                                 value={priority}
@@ -310,12 +310,12 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                     {/* Memo */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Memo
+                            メモ
                         </label>
                         <textarea
                             value={memo}
                             onChange={(e) => setMemo(e.target.value)}
-                            placeholder="Notes about this item..."
+                            placeholder="メモを入力..."
                             rows={3}
                             className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-[#0d59f2]/20 focus:border-[#0d59f2] transition-all resize-none"
                         />
@@ -328,14 +328,14 @@ export default function EditItemModal({ isOpen, item, onClose, onSave, onDelete 
                             onClick={onClose}
                             className="flex-1 h-12 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
                         >
-                            Cancel
+                            キャンセル
                         </button>
                         <button
                             type="submit"
                             disabled={!title.trim() || !price}
                             className="flex-1 h-12 bg-[#0d59f2] text-white rounded-xl font-semibold text-sm hover:bg-[#0d59f2]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#0d59f2]/30"
                         >
-                            Save Changes
+                            保存する
                         </button>
                     </div>
                 </form>

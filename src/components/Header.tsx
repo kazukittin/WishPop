@@ -26,7 +26,7 @@ export default function Header({
     onSearchChange,
 }: HeaderProps) {
     const tabs: { id: Status | 'all'; label: string }[] = [
-        { id: 'all', label: 'All Items' },
+        { id: 'all', label: 'すべて' },
         { id: 'want', label: STATUS_LABELS.want },
         { id: 'pending', label: STATUS_LABELS.pending },
         { id: 'bought', label: STATUS_LABELS.bought },
@@ -70,7 +70,7 @@ export default function Header({
                             <input
                                 type="text"
                                 className="w-full h-11 pl-11 pr-4 bg-gray-100 dark:bg-gray-800 border-transparent focus:border-transparent rounded-full text-sm font-medium focus:ring-2 focus:ring-[#0d59f2]/20 focus:bg-white dark:focus:bg-gray-900 transition-all placeholder:text-gray-500"
-                                placeholder="Search your items..."
+                                placeholder="アイテムを検索..."
                                 value={searchQuery}
                                 onChange={(e) => onSearchChange(e.target.value)}
                             />
@@ -81,7 +81,7 @@ export default function Header({
                     <div className="flex items-center gap-4 w-full md:w-auto justify-end">
                         <div className="flex flex-col items-end mr-2">
                             <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">
-                                Total Value
+                                合計金額
                             </span>
                             <span className="text-lg font-bold text-slate-900 dark:text-white leading-none">
                                 {formatPrice(totalValue)}

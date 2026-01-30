@@ -69,7 +69,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
         onAdd({
             title: title.trim(),
             description: description.trim() || undefined,
-            imageUrl: imageUrl.trim() || 'https://via.placeholder.com/400x300?text=No+Image',
+            imageUrl: imageUrl.trim() || 'https://placehold.co/400x300/e2e8f0/64748b?text=No+Image',
             price: parseFloat(price) || 0,
             url: url.trim(),
             status,
@@ -118,7 +118,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                 {/* Header */}
                 <div className="sticky top-0 z-10 flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-t-2xl">
                     <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-                        Add New Item
+                        新しいアイテムを追加
                     </h2>
                     <button
                         onClick={handleClose}
@@ -133,7 +133,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                     {/* URL Input with Fetch Button */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Product URL
+                            商品URL
                         </label>
                         <div className="flex gap-2">
                             <div className="relative flex-1">
@@ -157,10 +157,10 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                                 {isFetching ? (
                                     <>
                                         <Loader2 className="w-4 h-4 animate-spin" />
-                                        Fetching...
+                                        取得中...
                                     </>
                                 ) : (
-                                    'Fetch'
+                                    '情報取得'
                                 )}
                             </button>
                         </div>
@@ -172,13 +172,13 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                     {/* Title */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Title <span className="text-red-500">*</span>
+                            商品名 <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="text"
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Product name"
+                            placeholder="商品名を入力"
                             required
                             className="w-full h-11 px-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-[#0d59f2]/20 focus:border-[#0d59f2] transition-all"
                         />
@@ -187,7 +187,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                     {/* Image URL */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Image URL
+                            画像URL
                         </label>
                         <input
                             type="url"
@@ -200,7 +200,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                             <div className="mt-2 p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
                                 <img
                                     src={imageUrl}
-                                    alt="Preview"
+                                    alt="プレビュー"
                                     className="w-full h-32 object-cover rounded-lg"
                                     onError={(e) => {
                                         (e.target as HTMLImageElement).style.display = 'none';
@@ -213,7 +213,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                     {/* Price */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Price (¥) <span className="text-red-500">*</span>
+                            価格（円） <span className="text-red-500">*</span>
                         </label>
                         <input
                             type="number"
@@ -231,7 +231,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                         {/* Status */}
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Status
+                                ステータス
                             </label>
                             <select
                                 value={status}
@@ -249,7 +249,7 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                         {/* Priority */}
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                                Priority
+                                優先度
                             </label>
                             <select
                                 value={priority}
@@ -268,12 +268,12 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                     {/* Memo */}
                     <div>
                         <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                            Memo
+                            メモ
                         </label>
                         <textarea
                             value={memo}
                             onChange={(e) => setMemo(e.target.value)}
-                            placeholder="Notes about this item..."
+                            placeholder="メモを入力..."
                             rows={3}
                             className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-[#0d59f2]/20 focus:border-[#0d59f2] transition-all resize-none"
                         />
@@ -286,14 +286,14 @@ export default function AddItemModal({ isOpen, onClose, onAdd }: AddItemModalPro
                             onClick={handleClose}
                             className="flex-1 h-12 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-semibold text-sm hover:bg-gray-200 dark:hover:bg-gray-600 transition-all"
                         >
-                            Cancel
+                            キャンセル
                         </button>
                         <button
                             type="submit"
                             disabled={!title.trim() || !price}
                             className="flex-1 h-12 bg-[#0d59f2] text-white rounded-xl font-semibold text-sm hover:bg-[#0d59f2]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-[#0d59f2]/30"
                         >
-                            Add Item
+                            追加する
                         </button>
                     </div>
                 </form>

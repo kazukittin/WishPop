@@ -16,13 +16,13 @@ export interface WishlistItem {
 }
 
 export const STATUS_LABELS: Record<Status, string> = {
-  want: 'Want',
-  pending: 'Considering',
-  bought: 'Purchased',
+  want: '欲しい',
+  pending: '検討中',
+  bought: '購入済み',
 };
 
 export const PRIORITY_LABELS: Record<Priority, string> = {
-  S: 'High',
-  A: 'Med',
-  B: 'Low',
+  S: '高',
+  A: '中',
+  B: '低',
 };

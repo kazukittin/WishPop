@@ -230,7 +230,7 @@ export default function Home() {
       <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6] dark:bg-[#101622]">
         <div className="flex flex-col items-center gap-4">
           <div className="size-12 border-4 border-[#0d59f2] border-t-transparent rounded-full animate-spin" />
-          <p className="text-gray-500 dark:text-gray-400 font-medium">Loading...</p>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">読み込み中...</p>
         </div>
       </div>
     );
@@ -267,19 +267,19 @@ export default function Home() {
               </svg>
             </div>
             <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">
-              {searchQuery ? 'No items found' : 'No items yet'}
+              {searchQuery ? 'アイテムが見つかりません' : 'まだアイテムがありません'}
             </h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 max-w-sm mb-6">
               {searchQuery
-                ? 'Try adjusting your search or filter to find what you\'re looking for.'
-                : 'Start adding your wishlist items by clicking the + button below.'}
+                ? '検索条件を変更してお試しください。'
+                : '下の＋ボタンをクリックして、欲しいものを追加しましょう。'}
             </p>
             {!searchQuery && (
               <button
                 onClick={() => setIsAddModalOpen(true)}
                 className="px-6 py-3 bg-[#0d59f2] text-white rounded-xl font-semibold text-sm hover:bg-[#0d59f2]/90 transition-all shadow-lg shadow-[#0d59f2]/30"
               >
-                Add Your First Item
+                最初のアイテムを追加
               </button>
             )}
           </div>
