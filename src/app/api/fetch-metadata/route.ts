@@ -98,18 +98,22 @@ const SITE_CONFIGS: SiteConfig[] = [
             'Pragma': 'no-cache',
         },
         imagePatterns: [
-            // OGP image (most reliable)
-            /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
-            /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
-            // Main product image
-            /class=["'][^"']*mainPhoto[^"']*["'][^>]*>\s*<img[^>]+src=["']([^"']+)["']/i,
-            /id=["']imgMain["'][^>]*>\s*<img[^>]+src=["']([^"']+)["']/i,
-            /class=["'][^"']*itemviewImage[^"']*["'][^>]*>\s*<img[^>]+src=["']([^"']+)["']/i,
-            // Product thumbnail
-            /<img[^>]+class=["'][^"']*productPhoto[^"']*["'][^>]+src=["']([^"']+)["']/i,
-            // Any image from kakaku.com CDN
-            /<img[^>]+src=["'](https?:\/\/[^"']*kakaku\.com[^"']*\/images[^"']+)["']/i,
-            /<img[^>]+src=["'](https?:\/\/img1\.kakaku\.k-img\.com[^"']+)["']/i,
+            // Priority 1: Product gallery images (most reliable for actual product images)
+            /<img[^>]+class="[^"]*gallery[^"]*"[^>]+src=["']([^"']+)["']/i,
+            /<img[^>]+id="[^"]*gallery[^"]*"[^>]+src=["']([^"']+)["']/i,
+            // Priority 2: Main product photo container
+            /<div[^>]+class="[^"]*mainPhoto[^"]*"[^>]*>[\s\S]*?<img[^>]+src=["']([^"']+)["']/i,
+            /class=["'][^"']*itemviewImage[^"']*["'][^>]*>[\s\S]*?<img[^>]+src=["']([^"']+)["']/i,
+            // Priority 3: Product image from data attributes
+            /data-image=["']([^"']+)["']/i,
+            /data-src=["'](https?:\/\/[^"']*img1\.kakaku\.k-img\.com\/images\/productimage[^"']+)["']/i,
+            // Priority 4: Images from kakaku.com product image CDN
+            /<img[^>]+src=["'](https?:\/\/img1\.kakaku\.k-img\.com\/images\/productimage\/[^"']+)["']/i,
+            /<img[^>]+src=["'](https?:\/\/[^"']*kakaku[^"']*\/images\/productimage[^"']+)["']/i,
+            // Priority 5: Any product-related image from CDN (excluding logo)
+            /<img[^>]+src=["'](https?:\/\/img1\.kakaku\.k-img\.com\/images\/(?!.*(?:logo|icon|common|btn))[^"']+)["']/i,
+            // Priority 6: Fallback - images from product directory
+            /<img[^>]+src=["'](https?:\/\/[^"']+\/item\/K[0-9]+[^"']*)["']/i,
         ],
         titlePatterns: [
             // Product title
@@ -272,9 +276,37 @@ function cleanAmazonImageUrl(url: string): string {
         .replace(/\._[A-Z]{2}\d+_/g, '');
 }
 
+// Check if an image URL is likely a logo or icon (not a product image)
+function isLogoOrIcon(imageUrl: string): boolean {
+    const lowerUrl = imageUrl.toLowerCase();
+    const logoPatterns = [
+        'logo',
+        '/icon',
+        '_icon',
+        'favicon',
+        'ogimage', // Generic OGP image
+        '/common/',
+        '/shared/',
+        'sprite',
+        'btn_',
+        'button',
+        '/ui/',
+        'header_',
+        'footer_',
+        'nav_',
+        '/assets/images/og', // Common OGP path for site logos
+        'site-image',
+        'default-image',
+        'placeholder',
+    ];
+
+    return logoPatterns.some(pattern => lowerUrl.includes(pattern));
+}
+
 // Extract image from HTML
 function extractImage(html: string, url: string, siteConfig: SiteConfig | null): string | null {
     const parsedUrl = new URL(url);
+    const isKakaku = parsedUrl.hostname.includes('kakaku.com');
 
     // Use site-specific patterns first
     if (siteConfig?.imagePatterns) {
@@ -295,7 +327,13 @@ function extractImage(html: string, url: string, siteConfig: SiteConfig | null):
                     return null;
                 }
             }
-            return cleanImage;
+
+            // For Kakaku.com, skip if it looks like a logo
+            if (isKakaku && isLogoOrIcon(cleanImage)) {
+                // Continue to try other methods
+            } else {
+                return cleanImage;
+            }
         }
     }
 
@@ -309,14 +347,19 @@ function extractImage(html: string, url: string, siteConfig: SiteConfig | null):
 
     const ogImage = extractWithPatterns(html, ogPatterns);
     if (ogImage) {
+        let absoluteOgImage = ogImage;
         if (!ogImage.startsWith('http')) {
             try {
-                return new URL(ogImage, parsedUrl.origin).href;
+                absoluteOgImage = new URL(ogImage, parsedUrl.origin).href;
             } catch {
-                return null;
+                absoluteOgImage = '';
             }
         }
-        return ogImage;
+
+        // Skip if it looks like a logo (especially for Kakaku.com)
+        if (absoluteOgImage && (!isKakaku || !isLogoOrIcon(absoluteOgImage))) {
+            return absoluteOgImage;
+        }
     }
 
     // Fallback: JSON-LD image
@@ -336,6 +379,22 @@ function extractImage(html: string, url: string, siteConfig: SiteConfig | null):
             }
         }
         return jsonLdImage;
+    }
+
+    // Last resort for Kakaku.com: Try to find ANY product image
+    if (isKakaku) {
+        const lastResortPatterns = [
+            // Product images typically have specific path patterns
+            /<img[^>]+src=["'](https?:\/\/[^"']+\/images\/[^"']*(?:product|item|goods)[^"']*)["']/i,
+            /<img[^>]+src=["'](https?:\/\/img[0-9]*\.[^"']+\.com[^"']+\.(jpg|jpeg|png|webp))["']/i,
+        ];
+
+        for (const pattern of lastResortPatterns) {
+            const match = html.match(pattern);
+            if (match && match[1] && !isLogoOrIcon(match[1])) {
+                return match[1];
+            }
+        }
     }
 
     return null;
