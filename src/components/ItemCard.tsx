@@ -54,25 +54,45 @@ export default function ItemCard({ item, onEdit, onMenuClick }: ItemCardProps) {
     return (
         <div className="masonry-item item-card group relative bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
             {/* Image Container */}
-            <div className="relative w-full">
+            <a
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="relative block w-full cursor-pointer"
+                onClick={(e) => {
+                    if (!item.url) {
+                        e.preventDefault();
+                    }
+                }}
+            >
                 <Image
                     src={imageSrc}
                     alt={item.title}
                     width={400}
                     height={300}
-                    className="w-full h-auto object-cover"
+                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                     unoptimized
                 />
-                {/* Hover Overlay Actions */}
-                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-start justify-end p-3 gap-2">
-                    <button
-                        onClick={() => onEdit(item)}
-                        className="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all"
-                        title="Edit Item"
-                    >
-                        <Edit3 className="w-5 h-5" />
-                    </button>
-                </div>
+                {/* URL indicator */}
+                {item.url && (
+                    <div className="absolute bottom-2 right-2 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-medium text-gray-600 dark:text-gray-300 opacity-0 group-hover:opacity-100 transition-opacity shadow-sm">
+                        🔗 リンクを開く
+                    </div>
+                )}
+            </a>
+            {/* Hover Overlay Actions */}
+            <div className="absolute top-0 right-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                <button
+                    onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onEdit(item);
+                    }}
+                    className="bg-white/90 backdrop-blur-sm text-slate-900 p-2 rounded-full shadow-lg hover:bg-white hover:scale-110 transition-all"
+                    title="Edit Item"
+                >
+                    <Edit3 className="w-5 h-5" />
+                </button>
             </div>
 
             {/* Content */}
