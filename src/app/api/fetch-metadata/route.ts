@@ -165,6 +165,54 @@ const SITE_CONFIGS: SiteConfig[] = [
             /"price"\s*:\s*(\d+)/,
         ],
     },
+    // Workman (ワークマン)
+    {
+        hostPatterns: ['workman.jp', 'www.workman.jp'],
+        headers: {
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'ja-JP,ja;q=0.9,en-US;q=0.8,en;q=0.7',
+            'Accept-Encoding': 'gzip, deflate, br',
+        },
+        imagePatterns: [
+            // OGP image
+            /<meta[^>]+property=["']og:image["'][^>]+content=["']([^"']+)["']/i,
+            /<meta[^>]+content=["']([^"']+)["'][^>]+property=["']og:image["']/i,
+            // Product main image
+            /<img[^>]+class="[^"]*mainImage[^"]*"[^>]+src=["']([^"']+)["']/i,
+            /<img[^>]+id="[^"]*mainImage[^"]*"[^>]+src=["']([^"']+)["']/i,
+            // Product gallery/slider image
+            /<img[^>]+class="[^"]*slider[^"]*"[^>]+src=["']([^"']+)["']/i,
+            /<img[^>]+class="[^"]*gallery[^"]*"[^>]+src=["']([^"']+)["']/i,
+            // Images from workman CDN
+            /<img[^>]+src=["'](https?:\/\/[^"']*workman[^"']*\/[^"']*\.(jpg|jpeg|png|webp)[^"']*)["']/i,
+            // JSON-LD image
+            /"image"\s*:\s*"([^"]+)"/i,
+            /"image"\s*:\s*\[\s*"([^"]+)"/i,
+        ],
+        titlePatterns: [
+            // Product name
+            /<h1[^>]*class="[^"]*goodsName[^"]*"[^>]*>([^<]+)</i,
+            /<span[^>]*class="[^"]*goodsName[^"]*"[^>]*>([^<]+)</i,
+            /itemprop=["']name["'][^>]*>([^<]+)</i,
+            /"name"\s*:\s*"([^"]+)"/i,
+        ],
+        pricePatterns: [
+            // Tax-included price
+            /税込[^0-9]*¥?\s*([\d,]+)/i,
+            /（税込）[^0-9]*¥?\s*([\d,]+)/i,
+            // Price class patterns
+            /class="[^"]*price[^"]*"[^>]*>[^<]*¥?\s*([\d,]+)/i,
+            /class="[^"]*salesPrice[^"]*"[^>]*>[^<]*¥?\s*([\d,]+)/i,
+            // JSON-LD price
+            /"price"\s*:\s*"?([\d,]+)"?/i,
+            /"lowPrice"\s*:\s*"?([\d,]+)"?/i,
+            // Basic yen pattern
+            /¥\s*([\d,]+)/,
+            /￥\s*([\d,]+)/,
+            /([\d,]+)\s*円/,
+        ],
+    },
 ];
 
 // Get site-specific config
@@ -535,6 +583,7 @@ export async function POST(request: NextRequest) {
         const hostname = parsedUrl.hostname;
         const siteConfig = getSiteConfig(hostname);
         const isAmazon = hostname.includes('amazon');
+        const isWorkman = hostname.includes('workman.jp');
 
         let html = '';
         let title = '';
@@ -542,18 +591,22 @@ export async function POST(request: NextRequest) {
         let image = '';
         let price: number | null = null;
 
-        // Fetch HTML directly
-        try {
-            html = await fetchHtml(url, siteConfig);
+        // For sites that are JavaScript-rendered (like Workman), skip direct HTML fetch
+        // and go straight to OGS which might handle it better
+        if (!isWorkman) {
+            // Fetch HTML directly
+            try {
+                html = await fetchHtml(url, siteConfig);
 
-            // Extract data from HTML
-            title = extractTitle(html, siteConfig) || '';
-            description = extractDescription(html) || '';
-            image = extractImage(html, url, siteConfig) || '';
-            price = extractPrice(html, siteConfig);
+                // Extract data from HTML
+                title = extractTitle(html, siteConfig) || '';
+                description = extractDescription(html) || '';
+                image = extractImage(html, url, siteConfig) || '';
+                price = extractPrice(html, siteConfig);
 
-        } catch (fetchError) {
-            console.error('Error fetching HTML directly:', fetchError);
+            } catch (fetchError) {
+                console.error('Error fetching HTML directly:', fetchError);
+            }
         }
 
         // If direct fetch failed or got incomplete data, try OGS (but not for Amazon)
@@ -611,6 +664,28 @@ export async function POST(request: NextRequest) {
                 // Construct image URL from ASIN (this format usually works)
                 image = `https://images-na.ssl-images-amazon.com/images/P/${asin}.09.LZZZZZZZ.jpg`;
                 title = `Amazon商品 (ASIN: ${asin})`;
+            }
+        }
+
+        // For Workman, try to construct image URL from product code if we couldn't get it
+        if (isWorkman && !image) {
+            // Extract product code from URL (e.g., g2300053496071)
+            const productCodeMatch = url.match(/\/g\/g(\d+)\/?/);
+            if (productCodeMatch) {
+                const productCode = productCodeMatch[1];
+                // Try common Workman image URL patterns
+                const possibleImageUrls = [
+                    `https://workman.jp/img/goods/L/${productCode}.jpg`,
+                    `https://workman.jp/img/goods/${productCode}.jpg`,
+                    `https://workman.jp/shop/upload/save_image/${productCode}_01.jpg`,
+                    `https://workman.jp/shop/upload/save_image/${productCode}.jpg`,
+                ];
+                // Use the first pattern as a fallback
+                image = possibleImageUrls[0];
+
+                if (!title) {
+                    title = `ワークマン商品 (${productCode})`;
+                }
             }
         }
 
