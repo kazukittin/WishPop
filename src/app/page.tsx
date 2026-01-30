@@ -227,7 +227,7 @@ export default function Home() {
   // Show loading state while hydrating
   if (!isLoaded) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6] dark:bg-[#101622]">
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#101622]">
         <div className="flex flex-col items-center gap-4">
           <div className="size-12 border-4 border-[#0d59f2] border-t-transparent rounded-full animate-spin" />
           <p className="text-gray-500 dark:text-gray-400 font-medium">読み込み中...</p>

@@ -52,7 +52,7 @@ export default function ItemCard({ item, onEdit, onMenuClick }: ItemCardProps) {
     const imageSrc = item.imageUrl && item.imageUrl.trim() !== '' ? item.imageUrl : placeholderImage;
 
     return (
-        <div className="masonry-item item-card group relative bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-xl overflow-hidden ring-1 ring-black/5 dark:ring-white/10">
+        <div className="masonry-item item-card group relative bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
             {/* Image Container */}
             <div className="relative w-full">
                 <Image

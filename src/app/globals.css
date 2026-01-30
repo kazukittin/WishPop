@@ -2,7 +2,7 @@
 
 :root {
   --primary: #0d59f2;
-  --background-light: #f3f4f6;
+  --background-light: #ffffff;
   --background-dark: #101622;
 }
 
@@ -24,9 +24,9 @@ body {
 .light {
   --bg: var(--background-light);
   --card-bg: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #6b7280;
-  --border: #e5e7eb;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
 }
 
 /* Dark theme */
@@ -203,13 +203,17 @@ body {
 
 /* Glass morphism effect */
 .glass {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.08),
+    0 2px 8px -2px rgba(0, 0, 0, 0.05);
 }
 
 .dark .glass {
-  background: rgba(16, 22, 34, 0.85);
+  background: rgba(16, 22, 34, 0.97);
+  box-shadow: 0 4px 24px -4px rgba(0, 0, 0, 0.35),
+    0 2px 8px -2px rgba(0, 0, 0, 0.2);
 }
 
 /* Line clamp utility */
